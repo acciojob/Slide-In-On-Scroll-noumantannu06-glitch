@@ -1,41 +1,47 @@
-<script>
-  const sliderImages = document.querySelectorAll(".slide-in");
+const sliderImages = document.querySelectorAll(".slide-in");
 
-  function checkSlide() {
-    sliderImages.forEach((sliderImage) => {
-      const slideInAt = window.scrollY + window.innerHeight - sliderImage.height / 2;
-      const imageBottom = sliderImage.offsetTop + sliderImage.height;
+function checkSlide() {
+  sliderImages.forEach((sliderImage) => {
+    // Correct height calculation
+    const slideInAt =
+      window.scrollY + window.innerHeight - sliderImage.offsetHeight / 2;
 
-      const isHalfShown = slideInAt > sliderImage.offsetTop;
-      const isNotScrolledPast = window.scrollY < imageBottom;
+    const imageBottom =
+      sliderImage.offsetTop + sliderImage.offsetHeight;
 
-      if (isHalfShown && isNotScrolledPast) {
-        sliderImage.classList.add("active");
-      } else {
-        sliderImage.classList.remove("active");
-      }
-    });
-  }
+    const isHalfShown = slideInAt >= sliderImage.offsetTop;
+    const isNotScrolledPast = window.scrollY <= imageBottom;
 
-  function debounce(func, wait = 20, immediate = true) {
-    let timeout;
-    return function () {
-      const context = this;
-      const args = arguments;
+    if (isHalfShown && isNotScrolledPast) {
+      sliderImage.classList.add("active");
+    } else {
+      sliderImage.classList.remove("active");
+    }
+  });
+}
 
-      const later = function () {
-        timeout = null;
-        if (!immediate) func.apply(context, args);
-      };
+function debounce(func, wait = 20, immediate = true) {
+  let timeout;
 
-      const callNow = immediate && !timeout;
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
+  return function (...args) {
+    const context = this;
 
-      if (callNow) func.apply(context, args);
+    const later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
     };
-  }
 
-  window.addEventListener("scroll", debounce(checkSlide));
-  checkSlide();
-</script>
+    const callNow = immediate && !timeout;
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+
+    if (callNow) func.apply(context, args);
+  };
+}
+
+// IMPORTANT: run once initially
+checkSlide();
+
+// Scroll listener
+window.addEventListener("scroll", debounce(checkSlide));
