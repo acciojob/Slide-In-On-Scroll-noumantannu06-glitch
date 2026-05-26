@@ -1,4 +1,4 @@
-// Your JS code here.
+<script>
   const sliderImages = document.querySelectorAll(".slide-in");
 
   function checkSlide() {
@@ -37,4 +37,5 @@
   }
 
   window.addEventListener("scroll", debounce(checkSlide));
-
+  checkSlide();
+</script>
